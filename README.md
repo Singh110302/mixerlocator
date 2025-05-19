@@ -13,9 +13,9 @@ Messaging - Allows to communicate with the users
 
 ### screenshots
 
-![HomePage](assets/Screenshot 2025-05-19 at 5.30.27 PM)
-![FriendListPage](assets/Screenshot 2025-05-19 at 5.30.08 PM)
-![SettingPage](assets/Screenshot 2025-05-19 at 5.30.21 PM)
+![HomePage](ss1.jpg)
+![FriendListPage](ss2.jpg)
+![SettingPage](ssg.jpg)
 
 
 ### refrences
