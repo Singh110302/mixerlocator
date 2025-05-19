@@ -20,8 +20,12 @@ assets/Screenshot 2025-05-19 at 5.30.21 PM
 
 ### refrences
 
--[Getting Started - Google Maps](https://developers.google.com/maps/documentation/android-sdk/start)
--
+[Getting Started - Google Maps](https://developers.google.com/maps/documentation/android-sdk/start)
+[FireBase Documentation (Guide)](https://firebase.google.com/docs/guides/)
+[Get Started with Firebase Firestore](https://firebase.google.com/docs/firestore/quickstart)
+[Firestore Data Model](https://firebase.google.com/docs/firestore/data-model)
+[Firestore - Get Data](https://firebase.google.com/docs/firestore/query-data/get-data)
+[Firestore - Structure Data](https://firebase.google.com/docs/firestore/manage-data/structure-data)
 
 
 ## how it works ?
