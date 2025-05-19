@@ -1,16 +1,18 @@
 # mixerlocator
 
-A new Flutter project.
+A new Flutter based location tracking Application that allows user to track their friends location and also allows the messaging in real-time.
 
-## Getting Started
+I created this project just for learning puposes particularly about firebase (firestore db), google maps api and google location api.
 
-This project is a starting point for a Flutter application.
+## features
+Real Time Location Tracking - Get live updates of your current location 
+Distance Calculation - Measure the distance between two points.
+Offline Support - Works even with limited internet connectivity.
+Messaging - Allows to communicate with the users 
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## refrences
+
+Getting-Started- Google Maps
+
