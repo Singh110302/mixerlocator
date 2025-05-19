@@ -24,16 +24,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Color(20),
         elevation: 10,
         title: Text(['MixerLocator', 'Friends', 'Settings',][_currentIndex],
-           style: TextStyle(
-             fontWeight: FontWeight.w900,
-              fontSize: 29,
-           ), ),
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 29,
+          ), ),
       ),
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

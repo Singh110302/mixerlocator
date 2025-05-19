@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  image_picker: ^0.8.7+4
   google_maps_flutter: ^2.5.0
   geolocator: ^14.0.0
   permission_handler: ^12.0.0+1
@@ -67,6 +68,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - assets/map.png
+    - assets/profile.png
+    - assets/ss1.jpg
+    - assets/ss2.jpg
+    - assets/ss3.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -97,3 +104,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  # General configuration
+  color: "#42a5f5"  # Background color
+  image: "assets/splash_logo.png"  # Optional image
+  android: true
+  ios: true
+
+  # Android-specific
+  android_gravity: center
+
+  # iOS-specific
+  ios_content_mode: center

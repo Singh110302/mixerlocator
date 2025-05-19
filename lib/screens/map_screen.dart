@@ -281,7 +281,7 @@ class _MapScreenState extends State<MapScreen> {
               : GoogleMap(
             initialCameraPosition: CameraPosition(
               target: _currentPosition!,
-              zoom: 12,
+              zoom: 10,
             ),
             markers: _markers,
             polylines: _polylines,

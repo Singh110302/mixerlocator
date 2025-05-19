@@ -27,23 +27,21 @@ class FriendListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Friends'),
-      ),
       body: Container(
-        color: Colors.grey[200],
+        color: Colors.grey,
         child: ListView.builder(
           itemCount: friends.length,
           itemBuilder: (context, index) {
             final friend = friends[index];
             return Card(
+              color: Colors.black12,
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
                   child: Text(friend['name']![0]),
                   radius: 22,
-                  backgroundColor: Colors.blue[100],
+                  backgroundColor: Colors.white54,
                 ),
                 title: Text(
                   friend['name']!,
@@ -56,7 +54,7 @@ class FriendListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.message, color: Colors.blue),
+                      icon: const Icon(Icons.message, color: Colors.black38),
                       onPressed: () => _navigateToChatScreen(
                         context,
                         friend['uid']!,
@@ -65,7 +63,7 @@ class FriendListScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.directions, color: Colors.green),
+                      icon: const Icon(Icons.directions, color: Colors.black38),
                       onPressed: () {
                         // Keep your existing directions functionality
                         ScaffoldMessenger.of(context).showSnackBar(

@@ -1,28 +1,32 @@
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'login_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String userName = 'User';
+  ImageProvider profileImage = AssetImage('assets/profile.png');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        centerTitle: true,
-      ),
       body: ListView(
         children: [
-          // User Info Section
           _buildUserHeader(),
-          const Divider(height: 1),
+          const Divider(height: 40),
 
-          // Invite Friends
           _buildListTile(
             icon: Icons.people_alt_outlined,
             title: 'Invite Friends',
             subtitle: 'Share the app with your friends',
             onTap: () => _showInviteDialog(context),
           ),
-
-          // Help & Support
           _buildListTile(
             icon: Icons.help_outline,
             title: 'Help & Support',
@@ -34,8 +38,6 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // Account Settings
           _buildListTile(
             icon: Icons.settings_outlined,
             title: 'Account Settings',
@@ -47,17 +49,16 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // Logout
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(155.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.black26,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () => _showLogoutConfirmation(context),
-              child: const Text('Logout', style: TextStyle(fontSize: 16)),
+              child: const Text('Logout',
+                  style: TextStyle(fontSize: 16, color: Colors.black)),
             ),
           ),
         ],
@@ -66,22 +67,110 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildUserHeader() {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
+      padding: const EdgeInsets.all(35.0),
+      child: Stack(
         children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundImage: NetworkImage('https://example.com/profile.jpg'),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('John Doe', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text('john.doe@example.com', style: TextStyle(color: Colors.grey)),
+              CircleAvatar(
+                radius: 55,
+                backgroundImage: profileImage,
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    user?.email ?? 'unknown@example.com',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
             ],
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: () => _showEditProfileDialog(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditProfileDialog(BuildContext context) {
+    final nameController = TextEditingController(text: userName);
+    XFile? pickedImage;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Profile'),
+        content: StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final ImagePicker picker = ImagePicker();
+                      pickedImage = await picker.pickImage(source: ImageSource.gallery);
+                      if (pickedImage != null) {
+                        setStateDialog(() {
+                          profileImage = FileImage(File(pickedImage!.path));
+                        });
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: profileImage,
+                      child: const Align(
+                        alignment: Alignment.bottomRight,
+                        child: Icon(Icons.camera_alt, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          ElevatedButton(
+            child: const Text('Save'),
+            onPressed: () {
+              setState(() {
+                userName = nameController.text.trim().isEmpty
+                    ? userName
+                    : nameController.text.trim();
+              });
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -115,7 +204,8 @@ class SettingsScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Invite link copied to clipboard')));
+                const SnackBar(content: Text('Invite link copied to clipboard')),
+              );
             },
           ),
           TextButton(
@@ -143,8 +233,10 @@ class SettingsScreen extends StatelessWidget {
           TextButton(
             child: const Text('Logout', style: TextStyle(color: Colors.red)),
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
             },
           ),
         ],
@@ -152,7 +244,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
 
