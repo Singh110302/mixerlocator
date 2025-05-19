@@ -20,6 +20,15 @@ assets/Screenshot 2025-05-19 at 5.30.21 PM
 
 ### refrences
 
--Getting Started - Google Maps
+-[Getting Started - Google Maps](https://developers.google.com/maps/documentation/android-sdk/start)
 -
+
+
+## how it works ?
+
+
+The first device get continous location update from gps, network etc. then
+Write and update the location data to a specific firebase firestore document
+Last, the second device read that firebase firestore document and show the marker in that location
+
 
