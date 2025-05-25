@@ -15,7 +15,7 @@ I created this project just for learning puposes particularly about firebase (fi
 
 ![HomePage](ss1.jpg)
 ![FriendListPage](ss2.jpg)
-![SettingPage](ssg3.jpg)
+![SettingPage](ss3.jpg)
 
 
 ### refrences
