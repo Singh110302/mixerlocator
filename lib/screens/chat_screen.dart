@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rxdart/rxdart.dart';  // << Added for Rx.combineLatest2
 
 class ChatScreen extends StatefulWidget {
   final String friendId;
@@ -27,23 +28,18 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      });
-    }
-  }
-
-  @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
   }
 
   Future<void> _sendMessage() async {
@@ -65,8 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
 
       _messageController.clear();
-      setState(() {
-      });
+      setState(() {});
       _scrollToBottom();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,22 +76,35 @@ class _ChatScreenState extends State<ChatScreen> {
       return const Stream<List<QueryDocumentSnapshot<Map<String, dynamic>>>>.empty();
     }
 
-    return _firestore
+    final sentMessagesQuery = _firestore
         .collection('chats')
-        .orderBy('timestamp', descending: false)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.where((doc) {
-        final data = doc.data();
-        final senderId = data['senderId'];
-        final receiverId = data['receiverId'];
-        return (senderId == currentUser.uid && receiverId == widget.friendId) ||
-            (senderId == widget.friendId && receiverId == currentUser.uid);
-      }).toList();
-    });
+        .where('senderId', isEqualTo: currentUser.uid)
+        .where('receiverId', isEqualTo: widget.friendId)
+        .orderBy('timestamp');
+
+    final receivedMessagesQuery = _firestore
+        .collection('chats')
+        .where('senderId', isEqualTo: widget.friendId)
+        .where('receiverId', isEqualTo: currentUser.uid)
+        .orderBy('timestamp');
+
+    return Rx.combineLatest2(
+      sentMessagesQuery.snapshots(),
+      receivedMessagesQuery.snapshots(),
+          (QuerySnapshot<Map<String, dynamic>> sent, QuerySnapshot<Map<String, dynamic>> received) {
+        final allDocs = [...sent.docs, ...received.docs];
+        allDocs.sort((a, b) {
+          final tsA = a.data()['timestamp'] as Timestamp?;
+          final tsB = b.data()['timestamp'] as Timestamp?;
+          if (tsA == null && tsB == null) return 0;
+          if (tsA == null) return -1;
+          if (tsB == null) return 1;
+          return tsA.compareTo(tsB);
+        });
+        return allDocs;
+      },
+    );
   }
-
-
 
   Future<void> _getCurrentLocationLink() async {
     try {
@@ -176,7 +184,14 @@ class _ChatScreenState extends State<ChatScreen> {
               radius: 16,
             ),
             const SizedBox(width: 10),
-            Text(widget.friendName),
+            Text(
+              widget.friendName,
+              style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
           ],
         ),
       ),
@@ -196,8 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 final messages = snapshot.data ?? [];
 
-
-                WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+                _scrollToBottom();
 
                 return ListView.builder(
                   controller: _scrollController,

@@ -92,6 +92,7 @@ class _MapScreenState extends State<MapScreen> {
         if (doc.exists) {
           final data = doc.data();
           if (data != null && data['latitude'] != null && data['longitude'] != null) {
+            if (!mounted) return;
             setState(() {
               _markers.add(
                 Marker(

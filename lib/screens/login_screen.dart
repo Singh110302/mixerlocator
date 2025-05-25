@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'register_screen.dart';
 import 'home_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -56,8 +57,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login'),
-      backgroundColor: Colors.grey,),
+      appBar: AppBar(title: Text('Login',
+      style: GoogleFonts.montserrat(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+         color: Colors.black
+      ),
+      ),
+      backgroundColor: Colors.black45,),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Center(

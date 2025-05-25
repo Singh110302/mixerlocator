@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mixerlocator/screens/map_screen.dart';
 import 'frined_list_screen.dart';
 import 'settings_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -26,11 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black54,
         shadowColor: Color(20),
         elevation: 10,
         title: Text(['MixerLocator', 'Friends', 'Settings',][_currentIndex],
-          style: TextStyle(
+          style: GoogleFonts.montserrat(
             fontWeight: FontWeight.w900,
             fontSize: 29,
           ), ),
