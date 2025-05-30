@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart'; // For Clipboard
 import 'login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -14,13 +16,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ImageProvider profileImage = AssetImage('assets/profile.png');
 
   @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && user.displayName != null) {
+      userName = user.displayName!;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
           _buildUserHeader(),
           const Divider(height: 40),
-
           _buildListTile(
             icon: Icons.people_alt_outlined,
             title: 'Invite Friends',
@@ -163,13 +173,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ElevatedButton(
             child: const Text('Save'),
-            onPressed: () {
-              setState(() {
-                userName = nameController.text.trim().isEmpty
-                    ? userName
-                    : nameController.text.trim();
-              });
-              Navigator.pop(context);
+            onPressed: () async {
+              final newName = nameController.text.trim();
+              if (newName.isNotEmpty) {
+                try {
+                  User? user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    await user.updateDisplayName(newName);
+                    await user.reload();
+                    user = FirebaseAuth.instance.currentUser;
+
+                    setState(() {
+                      userName = newName;
+                    });
+
+                    Navigator.pop(context);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Profile updated successfully')),
+                    );
+                  }
+                } catch (e) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to update profile: $e')),
+                  );
+                }
+              } else {
+                Navigator.pop(context);
+              }
             },
           ),
         ],
@@ -193,24 +225,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showInviteDialog(BuildContext context) {
+    final String appDownloadLink = Platform.isAndroid
+        ? 'https://play.google.com/store/apps/details?id=com.example.yourapp'
+        : 'https://apps.apple.com/app/id1234567890';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Invite Friends'),
-        content: const Text('Share your referral code or invite link with friends'),
+        content: const Text('Share your referral link or invite others'),
         actions: [
           TextButton(
             child: const Text('Copy Link'),
             onPressed: () {
+              Clipboard.setData(ClipboardData(text: appDownloadLink));
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Invite link copied to clipboard')),
+                const SnackBar(content: Text('Link copied to clipboard')),
               );
             },
           ),
           TextButton(
             child: const Text('Share'),
             onPressed: () {
+              final message =
+                  'Hey! Check out this cool app I\'m using:\n$appDownloadLink';
+              Share.share(message);
               Navigator.pop(context);
             },
           ),
@@ -233,7 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextButton(
             child: const Text('Logout', style: TextStyle(color: Colors.red)),
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()),
               );
@@ -244,6 +284,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
 

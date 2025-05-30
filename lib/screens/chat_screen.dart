@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rxdart/rxdart.dart';  // << Added for Rx.combineLatest2
+import 'package:rxdart/rxdart.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; // <-- Add this import
 
 class ChatScreen extends StatefulWidget {
   final String friendId;
@@ -162,15 +163,31 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<void> _openLocationInMap(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not launch maps')),
-      );
+  void _openLocationInMap(String url) {
+    final uri = Uri.parse(url);
+    final query = uri.queryParameters['query'];
+    if (query != null) {
+      final parts = query.split(',');
+      if (parts.length == 2) {
+        final lat = double.tryParse(parts[0]);
+        final lng = double.tryParse(parts[1]);
+        if (lat != null && lng != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MapScreen(
+                targetLat: lat,
+                targetLng: lng,
+              ),
+            ),
+          );
+          return;
+        }
+      }
     }
+
+    // Fallback if parsing failed — open external map app
+    launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -358,6 +375,37 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Simple MapScreen for showing the tapped location inside the app
+class MapScreen extends StatelessWidget {
+  final double targetLat;
+  final double targetLng;
+
+  const MapScreen({
+    super.key,
+    required this.targetLat,
+    required this.targetLng,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Shared Location')),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(targetLat, targetLng),
+          zoom: 15,
+        ),
+        markers: {
+          Marker(
+            markerId: const MarkerId('sharedLocation'),
+            position: LatLng(targetLat, targetLng),
+          ),
+        },
       ),
     );
   }

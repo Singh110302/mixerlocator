@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
-import 'chat_screen.dart'; // Import the chat screen
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'chat_screen.dart'; // Import your chat screen
 
-class FriendListScreen extends StatelessWidget {
+class FriendListScreen extends StatefulWidget {
   const FriendListScreen({Key? key}) : super(key: key);
 
-  final List<Map<String, String>> friends = const [
+  @override
+  _FriendListScreenState createState() => _FriendListScreenState();
+}
+
+class _FriendListScreenState extends State<FriendListScreen> {
+  List<Map<String, String>> friends = [
     {'name': 'Alice', 'uid': 'user_id_1'},
     {'name': 'Bob', 'uid': 'user_id_2'},
     {'name': 'Charlie', 'uid': 'user_id_3'},
     {'name': 'Daisy', 'uid': 'user_id_4'},
   ];
 
-  // Remove the old _sendMessage function and replace with this:
+  final TextEditingController _nameController = TextEditingController();
+
   void _navigateToChatScreen(BuildContext context, String friendId, String friendName) {
     Navigator.push(
       context,
@@ -22,6 +29,88 @@ class FriendListScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showAddFriendDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Friend by Username'),
+        content: TextField(
+          controller: _nameController,
+          decoration: const InputDecoration(labelText: 'Enter Username'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _nameController.clear();
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final username = _nameController.text.trim();
+              if (username.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a username')),
+                );
+                return;
+              }
+
+              try {
+                final querySnapshot = await FirebaseFirestore.instance
+                    .collection('users')
+                    .where('name', isEqualTo: username)
+                    .limit(1)
+                    .get();
+
+                if (querySnapshot.docs.isNotEmpty) {
+                  final userDoc = querySnapshot.docs.first;
+                  final uid = userDoc.id;
+                  final userName = userDoc['name'];
+
+                  // Check if this friend is already added
+                  final alreadyAdded = friends.any((friend) => friend['uid'] == uid);
+
+                  if (alreadyAdded) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('"$userName" is already in your friend list')),
+                    );
+                  } else {
+                    setState(() {
+                      friends.add({'name': userName, 'uid': uid});
+                    });
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Friend "$userName" added')),
+                    );
+                  }
+
+                  _nameController.clear();
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User not found')),
+                  );
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error: $e')),
+                );
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +154,6 @@ class FriendListScreen extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.directions, color: Colors.black38),
                       onPressed: () {
-                        // Keep your existing directions functionality
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Getting directions to ${friend['name']}")),
                         );
@@ -78,6 +166,12 @@ class FriendListScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black12,
+        onPressed: _showAddFriendDialog,
+        child: const Icon(Icons.add, color: Colors.black),
+        tooltip: 'Add Friend',
       ),
     );
   }
