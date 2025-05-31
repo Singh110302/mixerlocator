@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart'; // For Clipboard
 import 'login_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey,
       body: ListView(
         children: [
           _buildUserHeader(),
@@ -67,8 +69,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: () => _showLogoutConfirmation(context),
-              child: const Text('Logout',
-                  style: TextStyle(fontSize: 16, color: Colors.black)),
+              child: Text('Logout',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color:Colors.black
+                  ),),
             ),
           ),
         ],
@@ -263,15 +269,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title:Text('Logout',style: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.bold
+        ),),
+        content: Text('Are you sure you want to logout?',
+        style: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.bold
+        ),),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child:Text('Cancel',style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.bold
+            ),),
             onPressed: () => Navigator.pop(context),
           ),
           TextButton(
-            child: const Text('Logout', style: TextStyle(color: Colors.red)),
+            child:Text('Logout', style:GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.bold
+            ),),
             onPressed: () {
               Navigator.pushReplacement(
                 context,

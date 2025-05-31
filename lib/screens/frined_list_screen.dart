@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'chat_screen.dart'; // Import your chat screen
+import 'package:google_fonts/google_fonts.dart';
 
 class FriendListScreen extends StatefulWidget {
   const FriendListScreen({Key? key}) : super(key: key);
@@ -35,10 +36,21 @@ class _FriendListScreenState extends State<FriendListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Friend by Username'),
+        backgroundColor: Colors.grey,
+        title: Text('Username',
+          style: GoogleFonts.montserrat(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),),
         content: TextField(
           controller: _nameController,
-          decoration: const InputDecoration(labelText: 'Enter Username'),
+          decoration: InputDecoration(labelText: 'Enter Username',labelStyle: (
+              GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.bold
+              )
+          )),
+
         ),
         actions: [
           TextButton(
@@ -46,7 +58,11 @@ class _FriendListScreenState extends State<FriendListScreen> {
               _nameController.clear();
               Navigator.pop(context);
             },
-            child: const Text('Cancel'),
+            child: Text('Cancel',style:
+              GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold
+              )),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -100,7 +116,11 @@ class _FriendListScreenState extends State<FriendListScreen> {
                 );
               }
             },
-            child: const Text('Add'),
+            child:  Text('Add',style:
+              GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold
+            )),
           ),
         ],
       ),

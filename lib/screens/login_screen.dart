@@ -79,7 +79,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: 'Email',
+                  labelStyle: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  )),
                 ),
                 const SizedBox(height: 12),
                 TextField(
@@ -87,6 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _isObscure,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    labelStyle: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isObscure ? Icons.visibility : Icons.visibility_off,
@@ -101,9 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     : ElevatedButton(
 
                   onPressed: _validateLogin,
-                  child: const Text('Login',style: TextStyle(
+                  child: Text('Login',style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                     color: Colors.black
-                  ),),
+                  )),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
@@ -111,9 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     context,
                     MaterialPageRoute(builder: (_) => RegisterScreen()),
                   ),
-                  child: const Text("Don't have an account? Register",style: TextStyle(
+                  child: Text("Don't have an account? Register",style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                     color: Colors.black
-                  ),),
+                  )),
                 ),
               ],
             ),

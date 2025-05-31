@@ -274,92 +274,96 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Stack(
+      body:Column(
         children: [
-          _isLoading || _currentPosition == null
-              ? const Center(child: CircularProgressIndicator())
-              : GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: _currentPosition!,
-              zoom: 10,
-            ),
-            markers: _markers,
-            polylines: _polylines,
-            onMapCreated: (controller) {
-              mapController = controller;
-            },
-            onTap: (_) {
-              setState(() {
-                _selectedMarkerId = null;
-                _showDirections = false;
-                _polylines.clear();
-              });
-            },
-            myLocationEnabled: true,
-          ),
-
-          // Zoom to fit button
-          Positioned(
-            right: 7,
-            bottom: 100,
-            child: FloatingActionButton(
-              heroTag: 'zoomToFitButton',
-              mini: true,
-              backgroundColor: Colors.white,
-              onPressed: _zoomToFitMarkers,
-              child: const Icon(Icons.location_searching_sharp, color: Colors.grey),
-            ),
-          ),
-
-          // Directions info panel
-          if (_showDirections && _distance != null && _duration != null)
-            Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+          Expanded(
+            child: Stack(
+            children: [
+              _isLoading || _currentPosition == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: _currentPosition!,
+                  zoom: 10,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Route Info',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text('Distance: $_distance'),
-                        Text('Duration: ~$_duration'),
-                      ],
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        setState(() {
-                          _showDirections = false;
-                          _polylines.clear();
-                        });
-                      },
-                    ),
-                  ],
+                markers: _markers,
+                polylines: _polylines,
+                onMapCreated: (controller) {
+                  mapController = controller;
+                },
+                onTap: (_) {
+                  setState(() {
+                    _selectedMarkerId = null;
+                    _showDirections = false;
+                    _polylines.clear();
+                  });
+                },
+                myLocationEnabled: true,
+              ),
+
+              // Zoom to fit button
+              Positioned(
+                right: 7,
+                bottom: 100,
+                child: FloatingActionButton(
+                  heroTag: 'zoomToFitButton',
+                  mini: true,
+                  backgroundColor: Colors.white,
+                  onPressed: _zoomToFitMarkers,
+                  child: const Icon(Icons.location_searching_sharp, color: Colors.grey),
                 ),
               ),
-            ),
+
+              // Directions info panel
+              if (_showDirections && _distance != null && _duration != null)
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Route Info',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text('Distance: $_distance'),
+                            Text('Duration: ~$_duration'),
+                          ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            setState(() {
+                              _showDirections = false;
+                              _polylines.clear();
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),)
         ],
-      ),
+      )
     );
   }
 
